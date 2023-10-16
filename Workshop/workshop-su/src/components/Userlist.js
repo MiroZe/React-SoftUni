@@ -1,11 +1,13 @@
 import {useEffect, useState} from 'react'
-import { getAllUsers } from '../services/userService';
+import { getAllUsers, getOneUser } from '../services/userService';
 import { User } from './User';
+import { Userdetails } from './Userdetails';
 
 
 export const Userlist = () => {
 
   const [users,setUsers] = useState([]);
+  const [currentUser,setCurrentUsers] = useState(null);
 
 useEffect (() => {
      getAllUsers()
@@ -17,10 +19,27 @@ useEffect (() => {
     .catch(err => console.log('Error:',err ))
 },[])
 
+const showUserDetails = (userId) => {
+
+   getOneUser(userId)
+  .then(data => {console.log(data) 
+    setCurrentUsers(data.user)})
+  
+
+}
+
+const hideInfo = () => {
+  setCurrentUsers(null)
+}
+
 
 
 
   return (
+
+    <>
+      {currentUser && <Userdetails {...currentUser} hideInfo={hideInfo}/>}
+
     <div className="table-wrapper">
       {/* <div className="loading-shade">
         Loading spinner
@@ -180,9 +199,11 @@ useEffect (() => {
           </tr>
         </thead>
         <tbody>
-          {users.map(u => <User key={u._id} {...u}/>)}
+          {users.map(u => <User key={u._id} {...u} showUserDetails={showUserDetails} />)}
         </tbody>
       </table>
+      <button className="btn-add btn">Add new user</button>
     </div>
+    </>
   );
 };

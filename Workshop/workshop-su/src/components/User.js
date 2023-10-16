@@ -6,7 +6,8 @@ export const User = (
   phoneNumber,
   updatedAt,
   createdAt,
-  imageUrl,}
+  imageUrl,
+  showUserDetails}
 ) => {
   return (
     <tr>
@@ -58,7 +59,7 @@ export const User = (
             ></path>
           </svg>
         </button>
-        <button className="btn info-btn" title="Info">
+        <button className="btn info-btn" title="Info" onClick={() => showUserDetails(_id)}>
           <svg
             aria-hidden="true"
             focusable="false"
