@@ -2,12 +2,14 @@ import {useEffect, useState} from 'react'
 import { getAllUsers, getOneUser } from '../services/userService';
 import { User } from './User';
 import { Userdetails } from './Userdetails';
+import { DeleteModal } from './DeleteModal';
 
 
 export const Userlist = () => {
 
   const [users,setUsers] = useState([]);
   const [currentUser,setCurrentUsers] = useState(null);
+  const [showComp, setShowComp] = useState(null)
 
 useEffect (() => {
      getAllUsers()
@@ -30,6 +32,18 @@ const showUserDetails = (userId) => {
 
 const hideInfo = () => {
   setCurrentUsers(null)
+  
+}
+
+const closeModal = () => {
+
+  setShowComp(null)
+
+}
+
+const onDeleteHandler = (userId) => {
+
+  setShowComp(userId)
 }
 
 
@@ -38,8 +52,8 @@ const hideInfo = () => {
   return (
 
     <>
-      {currentUser && <Userdetails {...currentUser} hideInfo={hideInfo}/>}
-
+      {currentUser && <Userdetails {...currentUser} hideInfo={hideInfo} />}
+       {showComp && <DeleteModal closeModal={closeModal} />}
     <div className="table-wrapper">
       {/* <div className="loading-shade">
         Loading spinner
@@ -199,7 +213,7 @@ const hideInfo = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map(u => <User key={u._id} {...u} showUserDetails={showUserDetails} />)}
+          {users.map(u => <User key={u._id} {...u} showUserDetails={showUserDetails} onDeleteHandler={onDeleteHandler}/>)}
         </tbody>
       </table>
       <button className="btn-add btn">Add new user</button>

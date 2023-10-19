@@ -7,7 +7,8 @@ export const User = (
   updatedAt,
   createdAt,
   imageUrl,
-  showUserDetails}
+  showUserDetails,
+  onDeleteHandler}
 ) => {
   return (
     <tr>
@@ -42,7 +43,7 @@ export const User = (
             ></path>
           </svg>
         </button>
-        <button className="btn delete-btn" title="Delete">
+        <button className="btn delete-btn" title="Delete" onClick={()=> onDeleteHandler(_id)}>
           <svg
             aria-hidden="true"
             focusable="false"
