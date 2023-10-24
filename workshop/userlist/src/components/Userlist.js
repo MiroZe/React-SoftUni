@@ -1,15 +1,17 @@
 import {useEffect, useState} from 'react'
-import { getAllUsers, getOneUser } from '../services/userService';
+import { addNewUser, deleteUser, getAllUsers, getOneUser } from '../services/userService';
 import { User } from './User';
 import { Userdetails } from './Userdetails';
 import { DeleteModal } from './DeleteModal';
+import {CreateUser} from './CreateUser'
 
 
 export const Userlist = () => {
 
   const [users,setUsers] = useState([]);
   const [currentUser,setCurrentUsers] = useState(null);
-  const [showComp, setShowComp] = useState(null)
+  const [showComp, setShowComp] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
 useEffect (() => {
      getAllUsers()
@@ -24,7 +26,7 @@ useEffect (() => {
 const showUserDetails = (userId) => {
 
    getOneUser(userId)
-  .then(data => {console.log(data) 
+  .then(data => { 
     setCurrentUsers(data.user)})
   
 
@@ -37,15 +39,36 @@ const hideInfo = () => {
 
 const closeModal = () => {
 
-  setShowComp(null)
+  setShowComp(null);
+  setShowForm(false)
 
 }
 
 const onDeleteHandler = (userId) => {
-
   setShowComp(userId)
 }
 
+const onDeleteUser = async(id) => {
+   await deleteUser(id);
+  setUsers(users=> users.filter(u =>u._id !==id)) 
+  setShowComp(null)
+}
+
+const saveUserHandler = async (userData) => {
+
+  const createdUser = await addNewUser(userData);
+ 
+   
+    setUsers(state => [...state, createdUser])
+    
+    setShowForm(false)
+    
+
+   
+
+  
+
+} 
 
 
 
@@ -53,7 +76,8 @@ const onDeleteHandler = (userId) => {
 
     <>
       {currentUser && <Userdetails {...currentUser} hideInfo={hideInfo} />}
-       {showComp && <DeleteModal closeModal={closeModal} />}
+       {showComp && <DeleteModal closeModal={closeModal} onDeleteUser= {onDeleteUser} showComp = {showComp} />}
+       {showForm && <CreateUser  saveUserHandler={saveUserHandler} closeModal={closeModal} />  }
     <div className="table-wrapper">
       {/* <div className="loading-shade">
         Loading spinner
@@ -216,8 +240,8 @@ const onDeleteHandler = (userId) => {
           {users.map(u => <User key={u._id} {...u} showUserDetails={showUserDetails} onDeleteHandler={onDeleteHandler}/>)}
         </tbody>
       </table>
-      <button className="btn-add btn">Add new user</button>
     </div>
+      <button className="btn-add btn" onClick={() => setShowForm(true)}>Add new user</button>
     </>
   );
 };

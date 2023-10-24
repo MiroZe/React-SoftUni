@@ -1,4 +1,4 @@
-export const DeleteModal = ({closeModal}) => {
+export const DeleteModal = ({closeModal, onDeleteUser, showComp}) => {
 
 
 
@@ -21,7 +21,9 @@ export const DeleteModal = ({closeModal}) => {
             </header>
             <div className="actions">
               <div id="form-actions">
-                <button id="action-save" className="btn" type="submit">Delete</button>
+                <button id="action-save" className="btn" type="submit" onClick={() =>{
+                  console.log(showComp);
+                  onDeleteUser(showComp)}}>Delete</button>
                 <button id="action-cancel" className="btn" type="button" onClick={()=>closeModal()}>
                   Cancel
                 </button>

@@ -13,3 +13,20 @@ export const getOneUser = async (userId) => {
     const result = await response.json();
     return result;
 }
+
+export const addNewUser = async(userData) => {
+
+
+ 
+ const response = await fetch(baseUrl, {method:'POST', headers:{"Content-Type": "application/json",}, body:JSON.stringify(userData)})
+
+
+    const result = await response.json();
+   
+    return result.user
+}
+
+export const deleteUser = async (id) => {
+    const response = await fetch(`${baseUrl}/${id}`, {method:'DELETE'});
+    return await response.json()
+}
