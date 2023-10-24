@@ -16,10 +16,47 @@ export  const CreateUser =  ({closeModal,saveUserHandler}) => {
         streetNumber:''
     })
 
+    const[errors,setErrors] = useState({
+        firstName : false,
+        lastName:false,
+        email:false,
+        imageUrl:false,
+        phoneNumber:false,
+        country:false,
+        street:false,
+        streetNumber:false
+    })
+
+    const phonePattern = /^0[1-9]{1}[0-9]{8}$/;
+    const emailPattern =/^[A-Za-z0-9_\.]+@[A-Za-z]+\.[A-Za-z]{2,3}$/;
+    const imagePattern = /^https?:\/\/.+/;
+
 
     const onFormChangeHandler = (e) => {
 
         setFormValues(state =>({...state, [e.target.name] : e.target.value}));
+        
+
+    }
+
+    const errCheck = (e,value,criteria,pattern) => {
+        if(pattern) {
+            const result = e.target.value.match(pattern)
+            if(!result) {
+               
+                setErrors(state =>({...state, [e.target.name] : true}))
+            } else {
+                
+                setErrors(state =>({...state, [e.target.name] : false}))
+            }
+        } else {
+
+            if(value < criteria) {
+                setErrors(state =>({...state, [e.target.name] : true}))
+            } else {
+                setErrors(state =>({...state, [e.target.name] : false}))
+            }
+        }
         
 
     }
@@ -38,9 +75,6 @@ export  const CreateUser =  ({closeModal,saveUserHandler}) => {
      
 
     }
-
-
-
 
 return (
 
@@ -66,21 +100,34 @@ return (
                 <label htmlFor="firstName">First name</label>
                 <div className="input-wrapper">
                   <span><i className="fa-solid fa-user"></i></span>
-                  <input id="firstName" name="firstName" type="text" value={formValues.firstName} onChange={onFormChangeHandler} />
+                  <input id="firstName" 
+                  name="firstName" 
+                  type="text"
+                   value={formValues.firstName} 
+                   onChange={onFormChangeHandler} 
+                   onBlur={(e) => errCheck(e,formValues.firstName.length, 3)}/>
                 </div>
+                {errors.firstName &&
                 <p className="form-error">
                   First name should be at least 3 characters long!
                 </p>
+                }
               </div>
               <div className="form-group">
                 <label htmlFor="lastName">Last name</label>
                 <div className="input-wrapper">
                   <span><i className="fa-solid fa-user"></i></span>
-                  <input id="lastName" name="lastName" type="text" onChange={onFormChangeHandler} value={formValues.lastName} />
+                  <input id="lastName" 
+                  name="lastName" 
+                  type="text" 
+                  onChange={onFormChangeHandler} 
+                  value={formValues.lastName} 
+                  onBlur={(e) => errCheck(e,formValues.lastName.length, 3)}/>
                 </div>
-                <p className="form-error">
+                {errors.lastName &&  <p className="form-error">
                   Last name should be at least 3 characters long!
-                </p>
+                </p> }
+               
               </div>
             </div>
 
@@ -89,17 +136,36 @@ return (
                 <label htmlFor="email">Email</label>
                 <div className="input-wrapper">
                   <span><i className="fa-solid fa-envelope"></i></span>
-                  <input id="email" name="email" type="text" onChange={onFormChangeHandler} value={formValues.email}/>
+                  <input id="email" 
+                  name="email" 
+                  type="text" 
+                  onChange={onFormChangeHandler} 
+                  value={formValues.email}
+                  onBlur={(e) => errCheck(e,formValues.email.value,null,emailPattern)}
+                  />
                 </div>
+                {errors.email && 
                 <p className="form-error">Email is not valid!</p>
+
+}
               </div>
               <div className="form-group">
                 <label htmlFor="phoneNumber">Phone number</label>
                 <div className="input-wrapper">
                   <span><i className="fa-solid fa-phone"></i></span>
-                  <input id="phoneNumber" name="phoneNumber" type="text" onChange={onFormChangeHandler} value={formValues.phoneNumber}/>
+                  <input id="phoneNumber"
+                   name="phoneNumber"
+                    type="text" 
+                    onChange={onFormChangeHandler} 
+                    value={formValues.phoneNumber}
+                    onBlur={(e) => errCheck(e,formValues.phoneNumber.value,null,phonePattern)}
+                    
+                    />
+                    
                 </div>
+                {errors.phoneNumber && 
                 <p className="form-error">Phone number is not valid!</p>
+            }
               </div>
             </div>
 
@@ -107,31 +173,54 @@ return (
               <label htmlFor="imageUrl">Image Url</label>
               <div className="input-wrapper">
                 <span><i className="fa-solid fa-image"></i></span>
-                <input id="imageUrl" name="imageUrl" type="text" onChange={onFormChangeHandler} value={formValues.imageUrl}/>
+                <input id="imageUrl"
+                 name="imageUrl"
+                  type="text" 
+                  onChange={onFormChangeHandler}
+                   value={formValues.imageUrl}
+                   onBlur={(e) => errCheck(e,formValues.imageUrl.value,null,imagePattern)}
+                   />
               </div>
-              <p className="form-error">ImageUrl is not valid!</p>
+              {errors.imageUrl &&
+              <p className="form-error">ImageUrl is not valid!</p> }
             </div>
+
 
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="country">Country</label>
                 <div className="input-wrapper">
                   <span><i className="fa-solid fa-map"></i></span>
-                  <input id="country" name="country" type="text" onChange={onFormChangeHandler} value={formValues.country}/>
+                  <input id="country" 
+                  name="country" type="text"
+                   onChange={onFormChangeHandler} 
+                   value={formValues.country}
+                   onBlur={(e) => errCheck(e,formValues.country.length, 2)}
+                   />
                 </div>
+                {errors.country && 
                 <p className="form-error">
                   Country should be at least 2 characters long!
                 </p>
+                }
               </div>
               <div className="form-group">
                 <label htmlFor="city">City</label>
                 <div className="input-wrapper">
                   <span><i className="fa-solid fa-city"></i></span>
-                  <input id="city" name="city" type="text" onChange={onFormChangeHandler} value={formValues.city}/>
+                  <input id="city" 
+                  name="city" 
+                  type="text" 
+                  onChange={onFormChangeHandler} 
+                  value={formValues.city}
+                  onBlur={(e) => errCheck(e,formValues.city.length, 3)}
+                  />
                 </div>
+                {errors.city && 
                 <p className="form-error">
                   City should be at least 3 characters long!
                 </p>
+                }
               </div>
             </div>
 
@@ -140,21 +229,37 @@ return (
                 <label htmlFor="street">Street</label>
                 <div className="input-wrapper">
                   <span><i className="fa-solid fa-map"></i></span>
-                  <input id="street" name="street" type="text" onChange={onFormChangeHandler} value={formValues.street}/>
+                  <input id="street" 
+                  name="street" 
+                  type="text" 
+                  onChange={onFormChangeHandler} 
+                  value={formValues.street}
+                  onBlur={(e) => errCheck(e,formValues.city.length, 3)}
+                  />
                 </div>
+                {errors.street && 
                 <p className="form-error">
                   Street should be at least 3 characters long!
                 </p>
+                }
               </div>
               <div className="form-group">
                 <label htmlFor="streetNumber">Street number</label>
                 <div className="input-wrapper">
                   <span><i className="fa-solid fa-house-chimney"></i></span>
-                  <input id="streetNumber" name="streetNumber" type="text" onChange={onFormChangeHandler} value={formValues.streetNumber}/>
+                  <input id="streetNumber" 
+                  name="streetNumber" 
+                  type="text" 
+                  onChange={onFormChangeHandler} 
+                  value={formValues.streetNumber}
+                  onBlur={(e) => errCheck(e,Number(formValues.streetNumber.value), 0)}
+                  />
                 </div>
+                {errors.streetNumber && 
                 <p className="form-error">
                   Street number should be a positive number!
                 </p>
+}
               </div>
             </div>
             <div id="form-actions">
