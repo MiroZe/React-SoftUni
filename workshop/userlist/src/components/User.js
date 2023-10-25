@@ -8,7 +8,8 @@ export const User = (
   createdAt,
   imageUrl,
   showUserDetails,
-  onDeleteHandler}
+  onDeleteHandler,
+  showEditForm}
 ) => {
   return (
     <tr>
@@ -26,7 +27,7 @@ export const User = (
       <td>{createdAt}</td>
 
       <td className="actions">
-        <button className="btn edit-btn" title="Edit">
+        <button className="btn edit-btn" title="Edit" onClick={()=> showEditForm(_id)}>
           <svg
             aria-hidden="true"
             focusable="false"

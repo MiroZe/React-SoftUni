@@ -30,3 +30,9 @@ export const deleteUser = async (id) => {
     const response = await fetch(`${baseUrl}/${id}`, {method:'DELETE'});
     return await response.json()
 }
+
+export const userSearch = async ( search, criteria) => {
+    const response = await fetch(`${baseUrl}/?search=${search}&criteria=${criteria}`);
+    return await response.json();
+
+}

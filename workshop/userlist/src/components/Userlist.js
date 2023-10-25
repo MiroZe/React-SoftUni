@@ -1,9 +1,12 @@
 import {useEffect, useState} from 'react'
-import { addNewUser, deleteUser, getAllUsers, getOneUser } from '../services/userService';
+import { addNewUser, deleteUser, getAllUsers, getOneUser, userSearch } from '../services/userService';
 import { User } from './User';
 import { Userdetails } from './Userdetails';
 import { DeleteModal } from './DeleteModal';
 import {CreateUser} from './CreateUser'
+import { Spinner } from './Spinner';
+import { Search } from './Search';
+import { Pagination } from './Pagination';
 
 
 export const Userlist = () => {
@@ -12,11 +15,13 @@ export const Userlist = () => {
   const [currentUser,setCurrentUsers] = useState(null);
   const [showComp, setShowComp] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
 
 useEffect (() => {
      getAllUsers()
     .then(data => {
       
+      setShowLoader(false)
       setUsers(data);
      
     })
@@ -27,6 +32,7 @@ const showUserDetails = (userId) => {
 
    getOneUser(userId)
   .then(data => { 
+    setShowComp(true)
     setCurrentUsers(data.user)})
   
 
@@ -62,88 +68,53 @@ const saveUserHandler = async (userData) => {
     setUsers(state => [...state, createdUser])
     
     setShowForm(false)
-    
-
-   
-
-  
 
 } 
 
+const showEditForm = async (id) => {
+  const currentUser = await getOneUser(id);
+  
+  setCurrentUsers(currentUser.user)
+  setShowComp(null)
+  setShowForm(id)
+}
+
+const searchUser = async (query, criteria) => {
+
+const result = await userSearch(query, criteria);
+
+ setUsers(result.users)
+
+
+}
+
+const sortUsers = (crit) => {
+ 
+
+ 
+  setUsers(prevUsers => [...prevUsers].sort((a, b) => a[crit].localeCompare(b[crit])));
+
+ 
+  console.log(users);
+
+}
 
 
   return (
 
     <>
-      {currentUser && <Userdetails {...currentUser} hideInfo={hideInfo} />}
+     <Search searchUser={searchUser} />
+      {currentUser &&  showComp && <Userdetails {...currentUser} hideInfo={hideInfo} showForm={showForm} />}
        {showComp && <DeleteModal closeModal={closeModal} onDeleteUser= {onDeleteUser} showComp = {showComp} />}
-       {showForm && <CreateUser  saveUserHandler={saveUserHandler} closeModal={closeModal} />  }
+       {showForm && <CreateUser  saveUserHandler={saveUserHandler} closeModal={closeModal} {...currentUser}/>  }
     <div className="table-wrapper">
-      {/* <div className="loading-shade">
-        Loading spinner
-        <div className="spinner"></div>
-        <div className="table-overlap">
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            data-prefix="fas"
-            data-icon="triangle-exclamation"
-            className="svg-inline--fa fa-triangle-exclamation Table_icon__+HHgn"
-            role="img"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-          >
-            <path
-              fill="currentColor"
-              d="M506.3 417l-213.3-364c-16.33-28-57.54-28-73.98 0l-213.2 364C-10.59 444.9 9.849 480 42.74 480h426.6C502.1 480 522.6 445 506.3 417zM232 168c0-13.25 10.75-24 24-24S280 154.8 280 168v128c0 13.25-10.75 24-23.1 24S232 309.3 232 296V168zM256 416c-17.36 0-31.44-14.08-31.44-31.44c0-17.36 14.07-31.44 31.44-31.44s31.44 14.08 31.44 31.44C287.4 401.9 273.4 416 256 416z"
-            ></path>
-          </svg>
-          <h2>There is no users yet.</h2>
-        </div>
-        No content overlap component
-        <div className="table-overlap">
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            data-prefix="fas"
-            data-icon="triangle-exclamation"
-            className="svg-inline--fa fa-triangle-exclamation Table_icon__+HHgn"
-            role="img"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-          >
-            <path
-              fill="currentColor"
-              d="M506.3 417l-213.3-364c-16.33-28-57.54-28-73.98 0l-213.2 364C-10.59 444.9 9.849 480 42.74 480h426.6C502.1 480 522.6 445 506.3 417zM232 168c0-13.25 10.75-24 24-24S280 154.8 280 168v128c0 13.25-10.75 24-23.1 24S232 309.3 232 296V168zM256 416c-17.36 0-31.44-14.08-31.44-31.44c0-17.36 14.07-31.44 31.44-31.44s31.44 14.08 31.44 31.44C287.4 401.9 273.4 416 256 416z"
-            ></path>
-          </svg>
-          <h2>Sorry, we couldn't find what you're looking for.</h2>
-        </div>
-        <div className="table-overlap">
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            data-prefix="fas"
-            data-icon="triangle-exclamation"
-            className="svg-inline--fa fa-triangle-exclamation Table_icon__+HHgn"
-            role="img"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-          >
-            <path
-              fill="currentColor"
-              d="M506.3 417l-213.3-364c-16.33-28-57.54-28-73.98 0l-213.2 364C-10.59 444.9 9.849 480 42.74 480h426.6C502.1 480 522.6 445 506.3 417zM232 168c0-13.25 10.75-24 24-24S280 154.8 280 168v128c0 13.25-10.75 24-23.1 24S232 309.3 232 296V168zM256 416c-17.36 0-31.44-14.08-31.44-31.44c0-17.36 14.07-31.44 31.44-31.44s31.44 14.08 31.44 31.44C287.4 401.9 273.4 416 256 416z"
-            ></path>
-          </svg>
-          <h2>Failed to fetch</h2>
-        </div>
-      </div> */}
-
+      
+      {showLoader && <Spinner />}
       <table className="table">
         <thead>
           <tr>
             <th>Image</th>
-            <th>
+            <th  onClick = {()=>sortUsers('firstName')}>
               First name
               <svg
                 aria-hidden="true"
@@ -161,7 +132,8 @@ const saveUserHandler = async (userData) => {
                 ></path>
               </svg>
             </th>
-            <th>
+            <th    onClick = {()=>sortUsers('lastName')}>
+           
               Last name
               <svg
                 aria-hidden="true"
@@ -237,11 +209,12 @@ const saveUserHandler = async (userData) => {
           </tr>
         </thead>
         <tbody>
-          {users.map(u => <User key={u._id} {...u} showUserDetails={showUserDetails} onDeleteHandler={onDeleteHandler}/>)}
+          {users.map(u => <User key={u._id} {...u} showUserDetails={showUserDetails} onDeleteHandler={onDeleteHandler} showEditForm={showEditForm}/>)}
         </tbody>
       </table>
     </div>
       <button className="btn-add btn" onClick={() => setShowForm(true)}>Add new user</button>
+      <Pagination />
     </>
   );
 };

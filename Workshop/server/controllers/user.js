@@ -81,6 +81,7 @@ const getUsers = async (req, res) => {
   }
 
   try {
+    
     const count = await userModel.countDocuments(query);
     let users = await userModel
       .find(query)

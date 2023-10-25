@@ -1,19 +1,29 @@
 import { useState } from "react"
 
-export  const CreateUser =  ({closeModal,saveUserHandler}) => {
+export  const CreateUser =  ({
+    closeModal,
+    saveUserHandler,
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    imageUrl,
+    address,
+    
+}) => {
 
 
     const [formValues, setFormValues] = useState({
-        firstName : '',
-        lastName : '',
-        email: '',
-        phoneNumber:'',
-        imageUrl: '',
+        firstName : firstName || '',
+        lastName : lastName || '',
+        email: email || '',
+        phoneNumber:phoneNumber || '',
+        imageUrl: imageUrl || '',
         
-        country :'',
-        city:'',
-        street: '',
-        streetNumber:''
+        country : address?.country || 'alala',
+        city: address.city || '',
+        street: address.street || '',
+        streetNumber: address.streetNumber || ''
     })
 
     const[errors,setErrors] = useState({
@@ -28,7 +38,7 @@ export  const CreateUser =  ({closeModal,saveUserHandler}) => {
     })
 
     const phonePattern = /^0[1-9]{1}[0-9]{8}$/;
-    const emailPattern =/^[A-Za-z0-9_\.]+@[A-Za-z]+\.[A-Za-z]{2,3}$/;
+    const emailPattern =/^[A-Za-z0-9_.]+@[A-Za-z]+\.[A-Za-z]{2,3}$/;
     const imagePattern = /^https?:\/\/.+/;
 
 
@@ -39,7 +49,7 @@ export  const CreateUser =  ({closeModal,saveUserHandler}) => {
 
     }
 
-    const errCheck = (e,value,criteria,pattern) => {
+    const errCheck = (e,criteria,pattern) => {
         if(pattern) {
             const result = e.target.value.match(pattern)
             if(!result) {
@@ -51,7 +61,8 @@ export  const CreateUser =  ({closeModal,saveUserHandler}) => {
             }
         } else {
 
-            if(value < criteria) {
+           
+            if(e.target.value.length < criteria) {
                 setErrors(state =>({...state, [e.target.name] : true}))
             } else {
                 setErrors(state =>({...state, [e.target.name] : false}))
@@ -105,7 +116,7 @@ return (
                   type="text"
                    value={formValues.firstName} 
                    onChange={onFormChangeHandler} 
-                   onBlur={(e) => errCheck(e,formValues.firstName.length, 3)}/>
+                   onBlur={(e) => errCheck(e, 3)}/>
                 </div>
                 {errors.firstName &&
                 <p className="form-error">
@@ -122,7 +133,7 @@ return (
                   type="text" 
                   onChange={onFormChangeHandler} 
                   value={formValues.lastName} 
-                  onBlur={(e) => errCheck(e,formValues.lastName.length, 3)}/>
+                  onBlur={(e) => errCheck(e, 3)}/>
                 </div>
                 {errors.lastName &&  <p className="form-error">
                   Last name should be at least 3 characters long!
@@ -141,7 +152,7 @@ return (
                   type="text" 
                   onChange={onFormChangeHandler} 
                   value={formValues.email}
-                  onBlur={(e) => errCheck(e,formValues.email.value,null,emailPattern)}
+                  onBlur={(e) => errCheck(e,null,emailPattern)}
                   />
                 </div>
                 {errors.email && 
@@ -158,7 +169,7 @@ return (
                     type="text" 
                     onChange={onFormChangeHandler} 
                     value={formValues.phoneNumber}
-                    onBlur={(e) => errCheck(e,formValues.phoneNumber.value,null,phonePattern)}
+                    onBlur={(e) => errCheck(e,null,phonePattern)}
                     
                     />
                     
@@ -178,7 +189,7 @@ return (
                   type="text" 
                   onChange={onFormChangeHandler}
                    value={formValues.imageUrl}
-                   onBlur={(e) => errCheck(e,formValues.imageUrl.value,null,imagePattern)}
+                   onBlur={(e) => errCheck(e,null,imagePattern)}
                    />
               </div>
               {errors.imageUrl &&
@@ -195,7 +206,7 @@ return (
                   name="country" type="text"
                    onChange={onFormChangeHandler} 
                    value={formValues.country}
-                   onBlur={(e) => errCheck(e,formValues.country.length, 2)}
+                   onBlur={(e) => errCheck(e, 2)}
                    />
                 </div>
                 {errors.country && 
@@ -213,7 +224,7 @@ return (
                   type="text" 
                   onChange={onFormChangeHandler} 
                   value={formValues.city}
-                  onBlur={(e) => errCheck(e,formValues.city.length, 3)}
+                  onBlur={(e) => errCheck(e,3)}
                   />
                 </div>
                 {errors.city && 
@@ -234,7 +245,7 @@ return (
                   type="text" 
                   onChange={onFormChangeHandler} 
                   value={formValues.street}
-                  onBlur={(e) => errCheck(e,formValues.city.length, 3)}
+                  onBlur={(e) => errCheck(e,3)}
                   />
                 </div>
                 {errors.street && 
@@ -252,7 +263,7 @@ return (
                   type="text" 
                   onChange={onFormChangeHandler} 
                   value={formValues.streetNumber}
-                  onBlur={(e) => errCheck(e,Number(formValues.streetNumber.value), 0)}
+                  onBlur={(e) => errCheck(e,0)}
                   />
                 </div>
                 {errors.streetNumber && 

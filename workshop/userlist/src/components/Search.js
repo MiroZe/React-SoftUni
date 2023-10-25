@@ -1,7 +1,30 @@
-export const Search = () => {
+import { useState } from "react"
+
+export const Search = ({searchUser}) => {
+
+
+  const [formValues, setFormValues] = useState({
+    search: '',
+    criteria: 'not selected'
+  })
+
+
+  const onChangeHandler = (e) => {
+   
+    console.log(e.target.value);
+    setFormValues(state => ({...state,[e.target.name]:e.target.value} ))
+  }
+
+  const onSearchHandler = (e) => {
+    e.preventDefault();
+    const {search, criteria} = formValues;
+    
+    searchUser(search,criteria)
+
+  }
 
     return (
-        <form className="search-form">
+        <form method="POST" className="search-form" onSubmit={onSearchHandler}>
         <h2>
           <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user"
             className="svg-inline--fa fa-user SearchBar_icon__cXpTg" role="img" xmlns="http://www.w3.org/2000/svg"
@@ -13,9 +36,13 @@ export const Search = () => {
           <span>Users</span>
         </h2>
         <div className="search-input-container">
-          <input type="text" placeholder="Please, select the search criteria" name="search" />
+          <input type="text" 
+          placeholder="Please, select the search criteria" 
+          name="search"
+          value={formValues.search}
+          onChange={(e) =>onChangeHandler(e)} />
          
-          <button className="btn close-btn">
+          <button className="btn close-btn" type="reset">
             <i className="fa-solid fa-xmark"></i>
           </button>
 
@@ -26,12 +53,12 @@ export const Search = () => {
 
         <div className="filter">
           <span>Search Criteria:</span>
-          <select name="criteria" className="criteria" value="">
-            <option value="">Not selected</option>
-            <option value="">First Name</option>
-            <option value="">Last Name</option>
-            <option value="">Email</option>
-            <option value="">Phone</option>
+          <select name="criteria" className="criteria" value={formValues.criteria} onChange={onChangeHandler}>
+            <option value="not-selected">Not selected</option>
+            <option value="firstName">First Name</option>
+            <option value="lastName">Last Name</option>
+            <option value="email">Email</option>
+            <option value="phoneNumber">Phone</option>
           </select>
         </div>
       </form>
